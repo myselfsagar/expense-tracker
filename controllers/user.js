@@ -64,7 +64,12 @@ const loginController = async (req, res) => {
   }
 };
 
+const userHomePageController = (request, response, next) => {
+  response.sendFile("userHome.html", { root: "views" });
+};
+
 module.exports = {
   signupController,
   loginController,
+  userHomePageController,
 };

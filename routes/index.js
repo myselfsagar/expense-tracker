@@ -2,16 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 //import all routes
-const userRoutes = require("./user.js");
 const mainPageRoutes = require("./mainPage.js");
+const userRoutes = require("./user.js");
+const expenseRoutes = require("./expense.js");
 
 //use all routes
 router.use(mainPageRoutes);
 router.use("/user", userRoutes);
-
-//Not found page
-router.use((req, res) => {
-  res.status(404).sendFile("notFound.html", { root: "views" });
-});
+router.use("/expense", expenseRoutes);
 
 module.exports = router;
