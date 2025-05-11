@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <style>
+      .app {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .signup {
+        padding: 30px;
+        border: 1px solid black;
+        min-width: 350px;
+        border-radius: 4px;
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+          rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+          rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+      }
+
+      .signup-form form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .heading {
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      label,
+      input {
+        display: block;
+        width: 100%;
+        margin-block: 4px;
+      }
+
+      input {
+        padding: 8px 10px;
+        border-radius: 4px;
+        border: 1px solid black;
+        font-weight: bold;
+        outline: none;
+      }
+
+      input:focus {
+        box-shadow: 0 0 3px #0866ff;
+      }
+
+      .submit {
+        margin-block: 10px;
+        background-color: #0866ff;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 4px;
+      }
+
+      .submit:hover {
+        background-color: #0861f0;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="signup">
+        <div class="heading">
+          <h1>Signup</h1>
+        </div>
+
+        <div class="signup-form">
+          <form onsubmit="handleSignupForm(event)">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required />
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required />
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required />
+            <button type="submit" class="submit">Signup</button>
+          </form>
+        </div>
+
+        <div class="login-footer">
+          <p style="text-align: center">
+            Already have an account? <a href="../pages/login.html">Login</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../scripts/signup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/home.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a class="navbar-brand" href="#">
+        <img src="/images/logo.jpg" alt="brand-image" class="brand-logo" />
+        <h2 class="navbar-title">
+          <span class="text-danger">Expense</span> Tracker
+        </h2>
+      </a>
+
+      <button class="navbar-toggler" aria-label="Toggle navigation">☰</button>
+
+      <div class="navbar-collapse" id="navmenu">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a href="#" class="nav-link">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" id="signup-link">Sign up</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" id="login-link">Login</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+      <div class="hero">
+        <div class="hero-image">
+          <img src="/images/primary.png" alt="Expense Tracker Illustration" />
+        </div>
+        <div class="hero-content">
+          <h1>Become a <span class="text-warning">Member</span></h1>
+          <p>
+            Money, money, money! Let's keep track! Simplify your finances,
+            amplify your savings.
+          </p>
+          <a href="#" class="btn btn-outline-primary" id="signup-btn-main"
+            >Sign up for free</a
+          >
+          <a href="#" class="btn btn-dark" id="premium-btn"
+            >Become a premium Member</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal" id="signup-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Sign up here</h2>
+          <button class="close-btn" id="close-signup">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="signup-form">
+            <div class="form-group">
+              <label for="Name"
+                ><i class="fas fa-user-astronaut"></i> Name</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="Name"
+                name="Name"
+                placeholder="Name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="email"
+                ><i class="fa-solid fa-envelope"></i> Email</label
+              >
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                placeholder="Email"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="password1"
+                ><i class="fas fa-lock"></i> Enter a Password</label
+              >
+              <div class="password-container">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password1"
+                  name="password1"
+                  placeholder="Password"
+                  required
+                />
+                <i
+                  class="fas fa-eye password-toggle"
+                  data-target="password1"
+                ></i>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password2"
+                ><i class="fas fa-lock"></i> Re-enter your password</label
+              >
+              <div class="password-container">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password2"
+                  name="password2"
+                  placeholder="Password"
+                  required
+                />
+                <i
+                  class="fas fa-eye password-toggle"
+                  data-target="password2"
+                ></i>
+              </div>
+            </div>
+            <div class="form-group text-center">
+              <input
+                type="submit"
+                class="submit"
+                value="Sign Up"
+                id="signup-submit"
+              />
+            </div>
+            <div class="form-group text-center">
+              Already a member? <a href="#" id="switch-to-login">Login here</a>
+            </div>
+            <div
+              class="alert alert-warning alert-dismissible"
+              id="email-alert-signup"
+            >
+              <strong>User already exist, login with the credentials.</strong>
+              <button
+                type="button"
+                class="btn-close"
+                id="close-email-alert-signup"
+              >
+                &times;
+              </button>
+            </div>
+            <div
+              class="alert alert-warning alert-dismissible"
+              id="password-alert-signup"
+            >
+              <strong>Both password should be same!</strong>
+              <button
+                type="button"
+                class="btn-close"
+                id="close-password-alert-signup"
+              >
+                &times;
+              </button>
+            </div>
+            <div
+              class="alert alert-success alert-dismissible"
+              id="success-alert-signup"
+            >
+              <strong>Sign up successful redirecting to login.</strong>
+              <button
+                type="button"
+                class="btn-close"
+                id="close-success-alert-signup"
+              >
+                &times;
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- login Modal -->
+    <div class="modal" id="login-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Login here</h2>
+          <button class="close-btn" id="close-login">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="" id="login-form">
+            <div class="form-group">
+              <label for="logEmail"
+                ><i class="fa-solid fa-envelope"></i> Email</label
+              >
+              <input
+                type="email"
+                class="form-control"
+                id="logEmail"
+                name="logEmail"
+                placeholder="Email"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="logPassword"
+                ><i class="fas fa-lock"></i> Password</label
+              >
+              <div class="password-container">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="logPassword"
+                  name="logPassword"
+                  placeholder="Password"
+                  required
+                />
+                <i
+                  class="fas fa-eye password-toggle"
+                  data-target="logPassword"
+                ></i>
+              </div>
+            </div>
+            <div class="form-group text-center">
+              <input
+                type="submit"
+                class="submit"
+                value="Login"
+                id="login-submit"
+              />
+            </div>
+            <div class="form-group text-center">
+              <a href="#" id="forgot-password-link">Forgot password?</a>
+            </div>
+            <div class="form-group text-center">
+              Not a member? <a href="#" id="switch-to-signup">Signup now</a>
+            </div>
+            <div
+              class="alert alert-warning alert-dismissible"
+              id="email-alert-login"
+            >
+              <strong>User not found. Kindly signup.</strong>
+              <button
+                type="button"
+                class="btn-close"
+                id="close-email-alert-login"
+              >
+                &times;
+              </button>
+            </div>
+            <div
+              class="alert alert-danger alert-dismissible"
+              id="password-alert-login"
+            >
+              <strong>Incorrect password, try again.</strong>
+              <button
+                type="button"
+                class="btn-close"
+                id="close-password-alert-login"
+              >
+                &times;
+              </button>
+            </div>
+            <div
+              class="alert alert-success alert-dismissible"
+              id="success-alert-login"
+            >
+              <strong>Successfully logged in. Redirecting to the app</strong>
+              <button
+                type="button"
+                class="btn-close"
+                id="close-success-alert-login"
+              >
+                &times;
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Premium Modal -->
+    <div class="modal" id="premium-modal">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #dc354580">
+          <h2>Register here</h2>
+          <button class="close-btn" id="close-premium">&times;</button>
+        </div>
+        <div class="modal-body" style="background-color: #dc35451a">
+          <form id="premium-form">
+            <div class="form-group">
+              <label for="rgstrName"
+                ><i class="fas fa-user-astronaut"></i> Name</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="rgstrName"
+                name="rgstrName"
+                placeholder="Name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="rgstrEmail"
+                ><i class="fa-solid fa-envelope"></i> Email</label
+              >
+              <input
+                type="email"
+                class="form-control"
+                id="rgstrEmail"
+                name="rgstrEmail"
+                placeholder="Email"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="rgstrPassword1"
+                ><i class="fas fa-lock"></i> Enter a Password</label
+              >
+              <div class="password-container">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="rgstrPassword1"
+                  name="password1"
+                  placeholder="Password"
+                  required
+                />
+                <i
+                  class="fas fa-eye password-toggle"
+                  data-target="rgstrPassword1"
+                ></i>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="rgstrPassword2"
+                ><i class="fas fa-lock"></i> Re-enter your password</label
+              >
+              <div class="password-container">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="rgstrPassword2"
+                  name="password2"
+                  placeholder="Password"
+                  required
+                />
+                <i
+                  class="fas fa-eye password-toggle"
+                  data-target="rgstrPassword2"
+                ></i>
+              </div>
+            </div>
+            <div class="form-group text-center">
+              <input
+                type="submit"
+                class="submit"
+                style="background-color: #dc3545"
+                value="Register"
+                id="register-submit"
+              />
+            </div>
+            <div
+              class="alert alert-warning alert-dismissible"
+              id="email-alert-premium"
+            >
+              <strong>User is already exist go to sign in page.</strong>
+              <button
+                type="button"
+                class="btn-close"
+                id="close-email-alert-premium"
+              >
+                &times;
+              </button>
+            </div>
+            <div
+              class="alert alert-warning alert-dismissible"
+              id="password-alert-premium"
+            >
+              <strong>Both password should be same.</strong>
+              <button
+                type="button"
+                class="btn-close"
+                id="close-password-alert-premium"
+              >
+                &times;
+              </button>
+            </div>
+            <div
+              class="alert alert-success alert-dismissible"
+              id="success-alert-premium"
+            >
+              <strong>Registration successful</strong>
+              <div class="mt-2">
+                <button
+                  type="button"
+                  class="btn"
+                  style="background-color: #ffc107; cursor: pointer"
+                  id="proceed-payment"
+                >
+                  Proceed to payment
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-danger"
+                  style="cursor: pointer"
+                  id="cancel-premium"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal" id="forgot-password-modal">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #dc354580">
+          <h2>Reset Your Password</h2>
+          <button class="close-btn" id="close-forgot">&times;</button>
+        </div>
+        <div class="modal-body" style="background-color: #dc35451a">
+          <form action="" method="" id="forgot-password-form">
+            <div class="form-group">
+              <label for="forgotEmail"
+                ><i class="fa-solid fa-envelope"></i> Email</label
+              >
+              <input
+                type="email"
+                class="form-control"
+                id="forgotEmail"
+                name="email"
+                placeholder="Email"
+                required
+              />
+            </div>
+            <div class="form-group text-center">
+              <input
+                type="submit"
+                class="submit"
+                value="Submit"
+                id="submit-forgot"
+              />
+            </div>
+            <div
+              class="alert alert-warning alert-dismissible"
+              id="email-alert-forgot"
+            >
+              <strong>User is not exist enter correct credentials.</strong>
+              <button
+                type="button"
+                class="btn-close"
+                id="close-email-alert-forgot"
+              >
+                &times;
+              </button>
+            </div>
+            <div
+              class="alert alert-success alert-dismissible"
+              id="success-alert-forgot"
+            >
+              <strong>Check mail for resetting password.</strong>
+              <span class="text-warning">Link is valid for 5 min</span>
+              <button
+                type="button"
+                class="btn-close"
+                id="close-success-alert-forgot"
+              >
+                &times;
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container text-center">
+        <p>&copy; 2025 Sagar Tech. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="/js/home.js"></script>
+</html>
