@@ -13,7 +13,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 0.6rem 2rem;
   width: 100%;
 }
 
@@ -37,7 +37,7 @@ body {
 }
 
 .text-danger {
-  color: white;
+  color: #dc3545;
 }
 
 .navbar-toggler {
@@ -46,7 +46,7 @@ body {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #222831;
+  color: black;
 }
 
 .navbar-nav {
@@ -67,7 +67,7 @@ body {
 }
 
 .nav-link:hover {
-  color: #222831;
+  color: black;
 }
 
 /* Main content styles */
@@ -312,7 +312,7 @@ footer {
 @media (max-width: 768px) {
   .navbar {
     flex-wrap: wrap;
-    padding: 1rem;
+    padding: 0.6rem;
   }
 
   .navbar-toggler {

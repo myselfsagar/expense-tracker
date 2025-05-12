@@ -64,6 +64,14 @@ const loginController = async (req, res) => {
   }
 };
 
+const getCurrentUser = async (req, res) => {
+  const user = req.user;
+  const userData = user.toJSON();
+  delete userData.password; //remove password before sending
+
+  return res.send(success(userData));
+};
+
 const userHomePageController = (request, response, next) => {
   response.sendFile("userHome.html", { root: "views" });
 };
@@ -71,5 +79,6 @@ const userHomePageController = (request, response, next) => {
 module.exports = {
   signupController,
   loginController,
+  getCurrentUser,
   userHomePageController,
 };

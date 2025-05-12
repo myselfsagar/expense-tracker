@@ -5,3 +5,7 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+
+.card {
+  background-color: #f4f7e6;
+}
