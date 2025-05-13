@@ -278,7 +278,7 @@ async function onLogin(e) {
     setTimeout(() => {
       e.target.reset();
       successAlertLogin.style.display = "none";
-      window.location.href = `user`;
+      window.location.replace(`user`);
     }, 1000);
   } catch (error) {
     console.error("An error occurred:", error);
@@ -295,11 +295,13 @@ const rgstrName = form3.querySelector("#rgstrName");
 const rgstrEmail = form3.querySelector("#rgstrEmail");
 const rgstrPassword1 = form3.querySelector("#rgstrPassword1");
 const rgstrPassword2 = form3.querySelector("#rgstrPassword2");
+const proceedPremium = form3.querySelector("#proceed-payment");
 const cancelPremium = form3.querySelector("#cancel-premium");
 
 let userCredentials;
 
 form3.addEventListener("submit", onRegister);
+proceedPremium.addEventListener("click", proceedPayment);
 cancelPremium.addEventListener("click", cancelPayment);
 
 async function onRegister(e) {
@@ -329,36 +331,143 @@ async function onRegister(e) {
       e.target.reset();
       return;
     }
+
     //when user is going for premium directly login him after signup
     userCredentials = await axios.post("user/login", {
       email: data.email,
       password: data.password,
     });
-    console.log(userCredentials);
 
     localStorage.setItem(
       "access_token",
       userCredentials.data.result.accessToken
     );
 
-    e.target.reset();
-    await purchasePremium();
+    successAlertPremium.style.display = "block";
   } catch (error) {
     console.error("An error occurred:", error);
   }
 }
 
-async function purchasePremium() {
+// --------------- Handle Cashfree payment ---------------
+const cashfree = Cashfree({ mode: "sandbox" });
+
+async function proceedPayment() {
   try {
-    console.log("premium");
-  } catch (error) {
-    console.log(err);
+    const token = localStorage.getItem("access_token");
+    // Fetch payment session ID from backend
+    const response = await axios.post(
+      `payment/pay`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    clearFields();
+
+    const { paymentSessionId, orderId } = response.data;
+
+    // Initialize checkout options
+    let checkoutOptions = {
+      paymentSessionId,
+      // redirectTarget: "_self",
+      //? Modal payment options
+      redirectTarget: "_modal",
+      //? Inline payment options
+      // redirectTarget: document.getElementById("cf_checkout"),
+      // appearance: {
+      //   width: "425px",
+      //   height: "700px",
+      // },
+    };
+
+    // Start the checkout process
+    const result = await cashfree.checkout(checkoutOptions);
+
+    if (result.error) {
+      // This will be true whenever user clicks on close icon inside the modal or any error happens during the payment
+      console.log(
+        "User has closed the popup or there is some payment error, Check for Payment Status"
+      );
+      console.log(result.error);
+    }
+    if (result.redirect) {
+      // This will be true when the payment redirection page couldn't be opened in the same window
+      // This is an exceptional case only when the page is opened inside an inAppBrowser
+      // In this case the customer will be redirected to return url once payment is completed
+      console.log("Payment will be redirected");
+    }
+    if (result.paymentDetails) {
+      // This will be called whenever the payment is completed irrespective of transaction status
+      const response = await axios.get(`payment/payment-status/${orderId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.orderStatus === "Success") {
+        localStorage.setItem("user_role", "premium");
+        window.location.reload();
+      }
+      alert("Thanks for being a premium member.");
+      window.location.replace("user");
+    }
+  } catch (err) {
+    console.error("Error initiating payment:", err.message);
+    alert("Payment error. Please try again.");
   }
+}
+
+function clearFields() {
+  // Remove form elements and show success message
+  const formGroups = form3.querySelectorAll(".form-group");
+  formGroups.forEach((group) => {
+    group.style.display = "none";
+  });
+  registerBtn.style.display = "none";
 }
 
 function cancelPayment() {
   alert("You are signed as Basic user");
-  window.location.href = "user";
+  window.location.replace("user");
+}
+
+// FOR PASSWORD RESET
+const forgotForm = document.querySelector("#forgot-password-form");
+const forgotEmail = forgotForm.querySelector("#forgotEmail");
+const emailAlertForgot = forgotForm.querySelector("#email-alert-forgot");
+const successAlertForgot = forgotForm.querySelector("#success-alert-forgot");
+const submitForgot = forgotForm.querySelector("#submit-forgot");
+
+forgotForm.addEventListener("submit", passwordReset);
+
+async function passwordReset(e) {
+  try {
+    e.preventDefault();
+
+    const data = {
+      email: forgotEmail.value,
+    };
+
+    const response = await axios.post("password/forgotPassword", data);
+
+    if (response.data.statusCode === 404) {
+      emailAlertForgot.style.display = "block";
+      setTimeout(() => {
+        emailAlertForgot.style.display = "none";
+      }, 3000);
+      return;
+    }
+
+    successAlertForgot.style.display = "block";
+
+    setTimeout(() => {
+      successAlertForgot.style.display = "none";
+      forgotForm.reset();
+      closeForgotModal();
+      openloginModal();
+    }, 5000);
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
 }
 
 // Password visibility toggle functionality

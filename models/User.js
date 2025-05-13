@@ -7,6 +7,7 @@ const User = sequelize.define("users", {
   email: { type: DataTypes.STRING, allowNull: false, unique: true },
   password: { type: DataTypes.STRING, allowNull: false },
   totalExpense: { type: DataTypes.FLOAT, defaultValue: 0 },
+  role: { type: DataTypes.ENUM("basic", "premium"), defaultValue: "basic" },
 });
 
 module.exports = User;

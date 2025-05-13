@@ -13,12 +13,12 @@ const sendPasswordResetEmail = async (request, response) => {
   try {
     const { email } = request.body;
     if (!email) {
-      return res.send(failure("Email is mandatory", 400));
+      return response.send(failure("Email is mandatory", 400));
     }
 
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.send(failure("User not found", 404));
+      return response.send(failure("User not found", 404));
     }
 
     const sender = { email: "ssahu6244@gmail.com", name: "From Sagar Tech." };
@@ -78,7 +78,7 @@ const updatepassword = async (request, response) => {
     const createdAtTime = new Date(passwordReset.createdAt);
     const timeDifference = currentTime - createdAtTime;
     const timeLimit = 5 * 60 * 1000;
-    if (timeDifference > timeLimit || !passwordReset.isActive) {
+    if (timeDifference > timeLimit) {
       return response.send(failure("Link has expired", 403));
     }
 

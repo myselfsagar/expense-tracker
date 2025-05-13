@@ -10,6 +10,7 @@
     />
     <link rel="stylesheet" href="/css/main.css" />
     <link rel="stylesheet" href="/css/home.css" />
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
   </head>
   <body>
     <!-- Navbar -->
@@ -409,6 +410,7 @@
                 >
                   Proceed to payment
                 </button>
+                <div id="cf_checkout"></div>
                 <button
                   type="button"
                   class="btn btn-outline-danger"
@@ -472,7 +474,9 @@
               id="success-alert-forgot"
             >
               <strong>Check mail for resetting password.</strong>
-              <span class="text-warning">Link is valid for 5 min</span>
+              <span class="text-warning"
+                >Link is valid for 5 min and can be clicked only once</span
+              >
               <button
                 type="button"
                 class="btn-close"

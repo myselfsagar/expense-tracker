@@ -24,7 +24,7 @@ authMiddleware = async (req, res, next) => {
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      res.send(failure("Time out please sign in", 401));
+      return res.send(failure("Time out please sign in", 401));
     } else {
       console.log("Error:", error);
       response.send(failure("Internal Server Error - Please login again"));
