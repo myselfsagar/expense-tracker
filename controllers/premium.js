@@ -39,7 +39,7 @@ const downloadExpenses = async (req, res) => {
       downloadUrl: URL,
     });
 
-    res.send(success(URL));
+    res.send(success({ URL }));
   } catch (error) {
     res.send(failure(`Unable to generate URL - ${error.message}`));
   }
@@ -48,8 +48,8 @@ const downloadExpenses = async (req, res) => {
 const getDownloadHistory = async (req, res) => {
   try {
     const user = req.user;
-    const history = await user.getDownloads();
-    res.send(history);
+    const history = await user.getDownloads({ order: [["createdAt", "DESC"]] });
+    res.send(success(history));
   } catch (error) {
     return res.send(failure(`Unable to fetch history - ${error.message}`));
   }

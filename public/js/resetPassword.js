@@ -53,8 +53,9 @@ resetPasswordForm.addEventListener("submit", async (e) => {
   try {
     const data = {
       resetId: lastPart,
-      newpassword: password,
+      newPassword: password,
     };
+    console.log(data);
 
     const response = await axios.post("/password/updatePassword", data);
 

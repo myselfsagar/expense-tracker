@@ -5,7 +5,7 @@ const premiumController = require("../controllers/premium");
 const router = express.Router();
 
 router.get(
-  "/showLeaderbord",
+  "/showLeaderboard",
   authMiddleware,
   premiumMiddleware,
   premiumController.showLeaderboard
