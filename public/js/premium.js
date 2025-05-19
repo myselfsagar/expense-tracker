@@ -28,7 +28,6 @@ function displayLeaderboard(data) {
 
 function displayDownloadHistory(data) {
   premiumElements.downloadHistoryList.innerHTML = "";
-  console.log(data);
 
   if (data.length > 0) {
     data.slice(0, 25).forEach((item) => {

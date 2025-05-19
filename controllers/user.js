@@ -76,9 +76,36 @@ const userHomePageController = (request, response, next) => {
   response.sendFile("userHome.html", { root: "views" });
 };
 
+const myProfileController = (request, response, next) => {
+  response.sendFile("myProfile.html", { root: "views" });
+};
+
+const updateProfileController = async (req, res) => {
+  const { name, email } = req.body;
+  const user = req.user;
+  try {
+    if (email && email !== user.email) {
+      const emailExist = await UserServices.getUserByEmail(email);
+      if (emailExist) {
+        return res.send(failure("Email id already registered", 409));
+      }
+      user.email = email;
+    }
+
+    if (name) user.name = name;
+    await user.save();
+
+    return res.send(success("Successfully updated"));
+  } catch (err) {
+    return res.send(failure(`Error while updating profile - ${err.message}`));
+  }
+};
+
 module.exports = {
   signupController,
   loginController,
   getCurrentUser,
   userHomePageController,
+  myProfileController,
+  updateProfileController,
 };

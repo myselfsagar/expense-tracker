@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker - MyProfile</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/myProfile.css" />
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+  </head>
+
+  <body class="page-background">
+    <!-- Navigation Bar -->
+    <nav class="main-navbar">
+      <div class="nav-container">
+        <div class="logo-container hidden" id="basicUserLogo">
+          <a class="brand-logo" href="#"
+            ><img src="/images/logo.jpg" alt="brand-logo" class="logo-image"
+          /></a>
+          <h2 class="brand-heading">
+            <a href="../user" class="heading-link">
+              <span class="highlight-text">Expense</span> Tracker
+            </a>
+          </h2>
+        </div>
+        <div class="logo-container hidden" id="premiumUserLogo">
+          <a class="brand-logo" href="#"
+            ><img
+              src="/images/prmlogo.jpg"
+              alt="premium-brand-logo"
+              class="logo-image premium-logo"
+          /></a>
+          <h2 class="brand-heading">
+            <a href="../user" class="heading-link">
+              <span class="highlight-text italic">Premium</span> ETracker
+            </a>
+          </h2>
+        </div>
+
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+          <span class="toggle-icon"></span>
+        </button>
+        <div class="nav-menu" id="navMenu">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../user" class="nav-link" id="profileLink">Home</a>
+            </li>
+            <li class="nav-item">
+              <a href="/home" class="nav-link" id="logoutButton">Log Out</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+      <!-- Profile Section -->
+      <div class="profile-section" id="profileSection">
+        <div class="profile-card">
+          <div class="profile-header">
+            <img
+              src="http://randomuser.me/api/portraits/men/11.jpg"
+              class="profile-image"
+              id="randomUserImage"
+              alt="User profile"
+            />
+            <h5 class="user-category" id="userCategoryDisplay">Basic user</h5>
+            <div class="user-details">
+              <label for="name"
+                ><i class="fas fa-user-astronaut"></i> Name</label
+              >
+              <input type="text" class="form-control" id="name" name="name" />
+            </div>
+            <div class="user-details">
+              <label for="email"
+                ><i class="fa-solid fa-envelope"></i> Email</label
+              >
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+              />
+            </div>
+
+            <button type="submit" class="submit" id="update-profile">
+              Update
+            </button>
+
+            <button type="submit" class="submit" id="reset-password">
+              Reset Password
+            </button>
+          </div>
+
+          <div class="alert-message alert hidden" id="emailAlertMessage">
+            <span>Email id already in use.</span>
+          </div>
+          <div class="alert-message success hidden" id="successMessage">
+            <span>Profile updated successfully.</span>
+          </div>
+
+          <div class="alert-message alert hidden" id="resetPasswordMessage">
+            <strong>Check mail for resetting password.</strong>
+            <span class="text-warning">
+              Link is valid for 5 min and can be clicked only once
+            </span>
+          </div>
+        </div>
+        <div class="ad-footer">
+          <a href="#" class="nav-link" id="showPaymentModal">
+            <button class="premium-button" id="buyPremiumButton">
+              Buy Premium
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay hidden" id="paymentModal">
+      <div class="modal-container">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="confirmation-message">
+              <div class="confirmation-text" id="confirmationText"></div>
+              <div class="button-group">
+                <button
+                  type="button"
+                  class="proceed-button"
+                  id="proceedToPayment"
+                >
+                  Proceed to payment
+                </button>
+                <button type="button" class="cancel-button" id="cancelPayment">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <footer class="main-footer">
+      <div class="footer-content">
+        <p>&copy; 2025 Sagar Tech. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="/js/myProfile.js"></script>
+  </body>
+</html>

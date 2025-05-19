@@ -88,7 +88,7 @@ function createAuthenticatedAxios() {
 
 function setupUserProfile() {
   authenticatedAxios
-    .get("user/myProfile")
+    .get("user/currentUser")
     .then((response) => {
       const { name, email, role } = response.data.result;
       currentUser = { name, email, role };
@@ -207,7 +207,7 @@ async function handleExpenseSubmit(e) {
     if (categoryValue === "Other") {
       const customCategory = document.getElementById("customCategory");
       if (!customCategory || !customCategory.value) {
-        showError("Please enter a custom category");
+        alert("Please enter a custom category");
         return;
       }
       categoryValue = customCategory.value;
@@ -257,7 +257,7 @@ async function handleExpenseSubmit(e) {
       if (currentUser.role === "premium") loadPremiumFeatures();
     } catch (error) {
       console.error("Error:", error);
-      showError(error.response?.data?.message || "Operation failed");
+      alert(error.response?.data?.message || "Operation failed");
     }
   }
 }

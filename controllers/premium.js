@@ -32,7 +32,7 @@ const downloadExpenses = async (req, res) => {
     const textData = formattedExpenses.join("\n");
     const fileName = `expense-data/user${user.id}/${
       user.name
-    }${new Date()}.txt`;
+    }-${new Date()}.txt`;
 
     const URL = await AwsService.uploadToS3(textData, fileName);
     await user.createDownload({
