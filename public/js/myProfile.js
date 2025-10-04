@@ -104,7 +104,7 @@ async function updateProfile() {
 
     elements.successMessage.classList.remove("hidden");
     //randomize image
-    elements.randomUserImage.src = `https://randomuser.me/api/portraits/men/${randomNum}.jpg`;
+    // elements.randomUserImage.src = `https://randomuser.me/api/portraits/men/${randomNum}.jpg`;
     setTimeout(() => {
       elements.successMessage.classList.add("hidden");
     }, 3000);
