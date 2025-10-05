@@ -1,83 +1,62 @@
 const Expense = require("../../models/Expense");
 const User = require("../../models/User");
-const sequelize = require("../../utils/dbConnect");
 const ErrorHandler = require("../../utils/errorHandler");
 
 const addExpense = async ({ category, amount, description, date, userId }) => {
-  const transaction = await sequelize.transaction();
-  try {
-    const expense = await Expense.create(
-      { category, amount: parseFloat(amount), description, date, userId },
-      { transaction }
-    );
-    await User.increment("totalExpense", {
-      by: parseFloat(amount),
-      where: { id: userId },
-      transaction,
-    });
-    const updatedUser = await User.findByPk(userId, {
-      attributes: ["totalExpense"],
-      transaction,
-    });
-    await transaction.commit();
-    return { expense, totalExpense: updatedUser.totalExpense };
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
-  }
+  const expense = await Expense.create({
+    category,
+    amount,
+    description,
+    date,
+    userId,
+  });
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { $inc: { totalExpense: parseFloat(amount) } },
+    { new: true }
+  );
+  return { expense, totalExpense: updatedUser.totalExpense };
 };
 
 const getAllExpenses = async ({ userId, page = 1, limit = 5 }) => {
-  const offset = (page - 1) * limit;
-  const user = await User.findByPk(userId);
-  const { count, rows: expenses } = await Expense.findAndCountAll({
-    where: { userId },
-    offset,
-    limit,
-    order: [["createdAt", "DESC"]],
-  });
+  const skip = (page - 1) * limit;
+  const user = await User.findById(userId);
+
+  const totalCount = await Expense.countDocuments({ userId });
+  const expenses = await Expense.find({ userId })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
   return {
     expenses,
     totalExpense: user.totalExpense,
-    totalCount: count,
-    hasMoreExpenses: expenses.length === limit,
+    totalCount,
+    hasMoreExpenses: skip + expenses.length < totalCount,
     hasPreviousExpenses: page > 1,
   };
 };
 
 const getExpenseById = async ({ userId, expenseId }) => {
-  const expense = await Expense.findOne({ where: { id: expenseId, userId } });
-  if (!expense) throw new ErrorHandler("Expense not found", 404);
+  const expense = await Expense.findOne({ _id: expenseId, userId: userId });
+  if (!expense) {
+    throw new ErrorHandler("Expense not found", 404);
+  }
   return expense;
 };
 
 const deleteExpense = async ({ userId, expenseId }) => {
-  const transaction = await sequelize.transaction();
-  try {
-    const expense = await Expense.findOne({
-      where: { id: expenseId, userId },
-      transaction,
-    });
-    if (!expense) {
-      await transaction.rollback();
-      throw new ErrorHandler("Expense not found", 404);
-    }
-    await Expense.destroy({ where: { id: expenseId, userId }, transaction });
-    await User.decrement("totalExpense", {
-      by: expense.amount,
-      where: { id: userId },
-      transaction,
-    });
-    const updatedUser = await User.findByPk(userId, {
-      attributes: ["totalExpense"],
-      transaction,
-    });
-    await transaction.commit();
-    return { totalExpense: updatedUser.totalExpense };
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
+  const expense = await Expense.findOne({ _id: expenseId, userId });
+  if (!expense) {
+    throw new ErrorHandler("Expense not found", 404);
   }
+  await Expense.deleteOne({ _id: expenseId });
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { $inc: { totalExpense: -expense.amount } },
+    { new: true }
+  );
+  return { totalExpense: updatedUser.totalExpense };
 };
 
 const updateExpense = async ({
@@ -88,40 +67,26 @@ const updateExpense = async ({
   description,
   date,
 }) => {
-  const transaction = await sequelize.transaction();
-  try {
-    const oldExpense = await Expense.findOne({
-      where: { id: expenseId, userId },
-      transaction,
-    });
-    if (!oldExpense) {
-      await transaction.rollback();
-      throw new ErrorHandler("Expense not found", 404);
-    }
-    await Expense.update(
-      { category, amount, description, date },
-      { where: { id: expenseId, userId }, transaction }
-    );
-    const updatedExpense = await Expense.findOne({
-      where: { id: expenseId, userId },
-      transaction,
-    });
-    const amountDifference = amount - oldExpense.amount;
-    await User.increment("totalExpense", {
-      by: amountDifference,
-      where: { id: userId },
-      transaction,
-    });
-    const updatedUser = await User.findByPk(userId, {
-      attributes: ["totalExpense"],
-      transaction,
-    });
-    await transaction.commit();
-    return { expense: updatedExpense, totalExpense: updatedUser.totalExpense };
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
+  const oldExpense = await Expense.findOne({ _id: expenseId, userId: userId });
+  if (!oldExpense) {
+    throw new ErrorHandler("Expense not found", 404);
   }
+
+  const amountDifference = parseFloat(amount) - oldExpense.amount;
+
+  const updatedExpense = await Expense.findByIdAndUpdate(
+    expenseId,
+    { category, amount, description, date },
+    { new: true } // This option returns the document after it has been updated
+  );
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { $inc: { totalExpense: amountDifference } },
+    { new: true }
+  );
+
+  return { expense: updatedExpense, totalExpense: updatedUser.totalExpense };
 };
 
 module.exports = {

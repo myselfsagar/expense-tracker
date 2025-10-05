@@ -446,23 +446,11 @@ forgotForm.addEventListener("submit", passwordReset);
 async function passwordReset(e) {
   try {
     e.preventDefault();
+    const data = { email: forgotEmail.value };
 
-    const data = {
-      email: forgotEmail.value,
-    };
-
-    const response = await axios.post("password/forgotPassword", data);
-
-    if (response.data.statusCode === 404) {
-      emailAlertForgot.style.display = "block";
-      setTimeout(() => {
-        emailAlertForgot.style.display = "none";
-      }, 3000);
-      return;
-    }
+    await axios.post("password/forgotPassword", data);
 
     successAlertForgot.style.display = "block";
-
     setTimeout(() => {
       successAlertForgot.style.display = "none";
       forgotForm.reset();
@@ -470,7 +458,14 @@ async function passwordReset(e) {
       openloginModal();
     }, 5000);
   } catch (error) {
-    console.error("An error occurred:", error);
+    if (error.response && error.response.status === 404) {
+      emailAlertForgot.style.display = "block";
+      setTimeout(() => {
+        emailAlertForgot.style.display = "none";
+      }, 3000);
+    } else {
+      console.error("An error occurred:", error);
+    }
   }
 }
 

@@ -402,19 +402,21 @@ async function handleDeleteExpense(expenseId) {
 
 function handleEditExpense(expenseId) {
   authenticatedAxios
-    .get(`expense/getExpenseByID/${expenseId}`)
+    .get(`expense/getExpenseById/${expenseId}`)
     .then((response) => {
-      const expense = response.data.data[0];
+      const expense = response.data.data;
       elements.expenseCategory.value = expense.category;
       elements.expenseDescription.value = expense.description;
       elements.expenseAmount.value = expense.amount;
-      elements.expenseDate.value = expense.date;
+      elements.expenseDate.value = new Date(expense.date)
+        .toISOString()
+        .split("T")[0];
       elements.expenseId.value = expenseId;
       elements.submitExpenseButton.textContent = "Update Expense";
     })
     .catch((error) => {
       console.error("Error fetching expense:", error);
-      loadExpenses();
+      alert("Could not fetch expense details.");
     });
 }
 

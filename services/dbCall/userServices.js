@@ -1,34 +1,16 @@
 const User = require("../../models/User");
+const ErrorHandler = require("../../utils/errorHandler");
 
-const createUser = async (userData) => {
-  try {
-    return await User.create(userData);
-  } catch (error) {
-    throw error;
-  }
-};
+const createUser = (userData) => User.create(userData);
 
-const getUserByEmail = async (email) => {
-  try {
-    let user = await User.findOne({ where: { email } });
-    return user;
-  } catch (error) {
-    throw error;
-  }
-};
+const getUserByEmail = (email) => User.findOne({ email });
 
 const getUserById = async (userId) => {
-  try {
-    const user = await User.findByPk(userId);
-    if (!user) {
-      throw new ErrorHandler("User not found", 404);
-    }
-    delete user.password;
-
-    return user;
-  } catch (error) {
-    throw error;
+  const user = await User.findById(userId).select("-password");
+  if (!user) {
+    throw new ErrorHandler("User not found", 404);
   }
+  return user;
 };
 
 const updateUserProfile = async (user, { name, email }) => {

@@ -29,7 +29,7 @@ const initiatePayment = async (req, res) => {
       paymentSessionId,
       orderAmount,
       orderCurrency,
-      payment_status: "PENDING",
+      payment_status: "Pending",
       userId: customerID,
     });
 
@@ -53,7 +53,7 @@ const checkPaymentStatus = async (req, res) => {
     const orderStatus = await cashfreeService.getPaymentStatus(orderId);
 
     // Find and update the payment status in DB
-    const order = await Payment.findOne({ where: { orderId } });
+    const order = await Payment.findOne({ orderId: orderId });
     if (!order) {
       return res.status(404).json({ Error: "Order not found." });
     }
@@ -61,7 +61,8 @@ const checkPaymentStatus = async (req, res) => {
     await order.save();
 
     if (orderStatus === "Success") {
-      await User.update({ role: "premium" }, { where: { id: order.userId } });
+      // Update the user's role
+      await User.updateOne({ _id: order.userId }, { role: "premium" });
     }
 
     res.status(200).json({ orderAmount: order.orderAmount, orderStatus });

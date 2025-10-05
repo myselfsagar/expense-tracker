@@ -93,28 +93,26 @@ async function updateProfile() {
       email: elements.email.value,
     };
 
-    const response = await authenticatedAxios.put("updateProfile", data);
-    if (error.response && error.response.status === 409) {
-      elements.emailAlertMessage.classList.remove("hidden");
-      setTimeout(() => {
-        elements.emailAlertMessage.classList.add("hidden");
-      }, 3000);
-      return;
-    }
+    await authenticatedAxios.put("updateProfile", data);
 
     elements.successMessage.classList.remove("hidden");
-    //randomize image
-    // elements.randomUserImage.src = `https://randomuser.me/api/portraits/men/${randomNum}.jpg`;
     setTimeout(() => {
       elements.successMessage.classList.add("hidden");
     }, 3000);
     getUserProfile();
   } catch (error) {
-    console.error("An error occurred:", error);
+    if (error.response && error.response.status === 409) {
+      elements.emailAlertMessage.classList.remove("hidden");
+      setTimeout(() => {
+        elements.emailAlertMessage.classList.add("hidden");
+      }, 3000);
+    } else {
+      console.error("An error occurred:", error);
+    }
   }
 }
 
-// FOR PASSWORD RESET
+//password reset
 async function passwordReset(e) {
   try {
     await authenticatedAxios.post("../../password/forgotPassword", {
@@ -127,6 +125,7 @@ async function passwordReset(e) {
     }, 3000);
   } catch (error) {
     console.error("An error occurred:", error);
+    alert("Could not send password reset email. Please try again later.");
   }
 }
 

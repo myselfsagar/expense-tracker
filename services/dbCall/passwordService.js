@@ -4,18 +4,22 @@ const bcrypt = require("bcrypt");
 const ErrorHandler = require("../../utils/errorHandler");
 
 const findUserByEmail = async (email) => {
-  const user = await User.findOne({ where: { email } });
-  if (!user) throw new ErrorHandler("User not found", 404);
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    throw new ErrorHandler("User not found", 404);
+  }
   return user;
 };
 
 const createForgotPasswordRequest = async (user) => {
-  return await user.createForgotPassword({});
+  return await ForgotPassword.create({ userId: user._id });
 };
 
 const findForgotPasswordById = async (resetId) => {
-  const request = await ForgotPassword.findByPk(resetId);
-  if (!request) throw new ErrorHandler("Reset request not found", 404);
+  const request = await ForgotPassword.findById(resetId);
+  if (!request) {
+    throw new ErrorHandler("Reset request not found", 404);
+  }
   return request;
 };
 
@@ -26,7 +30,7 @@ const markResetInactive = async (resetRequest) => {
 
 const updateUserPassword = async (userId, newPassword) => {
   const hashedPassword = await bcrypt.hash(newPassword, 10);
-  await User.update({ password: hashedPassword }, { where: { id: userId } });
+  await User.updateOne({ _id: userId }, { password: hashedPassword });
 };
 
 module.exports = {

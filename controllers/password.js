@@ -23,8 +23,8 @@ const sendPasswordResetEmail = asyncHandler(async (req, res) => {
   const sender = { email: "ssahu6244@gmail.com", name: "From Sagar Tech." };
   const receivers = [{ email }];
 
-  const resetresponse = await passwordService.createForgotPasswordRequest(user);
-  const { id } = resetresponse;
+  const resetResponse = await passwordService.createForgotPasswordRequest(user);
+  const { _id } = resetResponse;
 
   await tranEmailApi.sendTransacEmail({
     sender,
@@ -39,10 +39,10 @@ const sendPasswordResetEmail = asyncHandler(async (req, res) => {
         <body>
             <h1>Reset Your Password</h1>
             <p>Click the button below to reset your password (Valid for 5 minute):</p><br>
-            <button><a href="${process.env.WEBSITE}/password/resetPassword/${id}">Reset Password</a></button>
+            <button><a href="${process.env.WEBSITE}/password/resetPassword/${_id}">Reset Password</a></button>
         </body>
         </html>`,
-    params: { role: id },
+    params: { role: _id },
   });
 
   return sendSuccess(res, {}, "Password reset email sent");
@@ -50,10 +50,9 @@ const sendPasswordResetEmail = asyncHandler(async (req, res) => {
 
 const verifyResetRequest = asyncHandler(async (req, res) => {
   let { resetId } = req.params;
-  const passwordReset = await ForgotPassword.findByPk(resetId);
+  const passwordReset = await passwordService.findForgotPasswordById(resetId);
   if (passwordReset.isActive) {
-    passwordReset.isActive = false;
-    await passwordReset.save();
+    await passwordService.markResetInactive(passwordReset);
     return res.sendFile("resetPassword.html", { root: "views" });
   } else {
     throw new ErrorHandler("Link has expired", 403);
@@ -62,23 +61,21 @@ const verifyResetRequest = asyncHandler(async (req, res) => {
 
 const updatepassword = asyncHandler(async (req, res) => {
   const { resetId, newPassword } = req.body;
-  const passwordReset = await ForgotPassword.findByPk(resetId);
+  const passwordReset = await passwordService.findForgotPasswordById(resetId);
+
   const currentTime = new Date();
   const createdAtTime = new Date(passwordReset.createdAt);
   const timeDifference = currentTime - createdAtTime;
   const timeLimit = 5 * 60 * 1000;
-  if (timeDifference > timeLimit) {
-    throw new ErrorHandler("Link has expired", 403);
+
+  if (timeDifference > timeLimit || passwordReset.isActive) {
+    if (passwordReset.isActive) {
+      await passwordService.markResetInactive(passwordReset);
+    }
+    throw new ErrorHandler("Link has expired or has been already used", 403);
   }
 
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-  await User.update(
-    { password: hashedPassword },
-    { where: { id: passwordReset.userId } }
-  );
-
-  passwordReset.isActive = false;
-  await passwordReset.save();
+  await passwordService.updateUserPassword(passwordReset.userId, newPassword);
 
   sendSuccess(res, {}, "Password updated successfully.");
 });
