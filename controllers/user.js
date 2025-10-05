@@ -66,7 +66,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   const userData = user.toJSON();
   delete userData.password; //remove password before sending
 
-  return res.send(success(userData));
+  return sendSuccess(res, userData, "Current user fetched");
 });
 
 const userHomePageController = (req, res, next) => {

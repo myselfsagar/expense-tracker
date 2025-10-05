@@ -3,7 +3,7 @@ const userServices = require("../services/dbCall/userServices");
 const asyncHandler = require("../utils/asyncHandler");
 const ErrorHandler = require("../utils/errorHandler");
 
-exports.authMiddleware = asyncHandler(async (req, res, next) => {
+const authMiddleware = asyncHandler(async (req, res, next) => {
   if (!req.headers.authorization?.startsWith("Bearer ")) {
     throw new ErrorHandler("Unauthorized, token missing", 401);
   }
@@ -16,3 +16,5 @@ exports.authMiddleware = asyncHandler(async (req, res, next) => {
   req.user = user;
   next();
 });
+
+module.exports = authMiddleware;

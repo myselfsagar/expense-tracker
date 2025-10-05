@@ -65,7 +65,7 @@ function createAuthenticatedAxios() {
 async function getUserProfile() {
   try {
     const response = await authenticatedAxios.get("currentUser");
-    const { name, email, role } = response.data.result;
+    const { name, email, role } = response.data.data;
     currentUser = { name, email, role };
 
     elements.name.value = name;
@@ -94,7 +94,7 @@ async function updateProfile() {
     };
 
     const response = await authenticatedAxios.put("updateProfile", data);
-    if (response.data.statusCode === 409) {
+    if (error.response && error.response.status === 409) {
       elements.emailAlertMessage.classList.remove("hidden");
       setTimeout(() => {
         elements.emailAlertMessage.classList.add("hidden");

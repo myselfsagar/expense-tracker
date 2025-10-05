@@ -1,8 +1,11 @@
 const passwordService = require("../services/dbCall/passwordService");
 const asyncHandler = require("../utils/asyncHandler");
 const { sendSuccess } = require("../utils/responseWrapper");
-const ErrorHandler = require("../../utils/errorHandler");
+const ErrorHandler = require("../utils/errorHandler");
 const Sib = require("sib-api-v3-sdk");
+const bcrypt = require("bcrypt");
+const ForgotPassword = require("../models/ForgotPassword");
+const User = require("../models/User");
 
 // Setup Sendinblue email client
 const client = Sib.ApiClient.instance;

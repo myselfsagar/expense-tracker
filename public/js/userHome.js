@@ -90,7 +90,7 @@ function setupUserProfile() {
   authenticatedAxios
     .get("user/currentUser")
     .then((response) => {
-      const { name, email, role } = response.data.result;
+      const { name, email, role } = response.data.data;
       currentUser = { name, email, role };
 
       elements.userNameDisplay.textContent = name;
@@ -119,7 +119,7 @@ async function loadExpenses() {
     const response = await authenticatedAxios.get(
       `expense/getExpenses?page=${currentPage}&limit=${rowsPerPage}`
     );
-    displayExpenses(response.data.result);
+    displayExpenses(response.data.data);
   } catch (error) {
     handleExpenseError(error);
   }
@@ -229,10 +229,10 @@ async function handleExpenseSubmit(e) {
         );
 
         // Verify response structure
-        if (response.data?.result?.expense) {
+        if (response.data?.data?.expense) {
           // loadExpenses();
-          addExpenseToUI(response.data.result.expense);
-          updateTotalExpense(response.data.result.totalExpense);
+          addExpenseToUI(response.data.data.expense);
+          updateTotalExpense(response.data.data.totalExpense);
           showSuccessMessage();
         } else {
           throw new Error("Invalid response format");
@@ -244,9 +244,9 @@ async function handleExpenseSubmit(e) {
           expenseData
         );
 
-        if (response.data?.result?.expense) {
-          updateExpenseInUI(response.data.result.expense);
-          updateTotalExpense(response.data.result.totalExpense);
+        if (response.data?.data?.expense) {
+          updateExpenseInUI(response.data.data.expense);
+          updateTotalExpense(response.data.data.totalExpense);
           showUpdateMessage();
         } else {
           throw new Error("Invalid response format");
@@ -375,7 +375,7 @@ async function handleDeleteExpense(expenseId) {
         row.remove();
         renumberRows();
 
-        updateTotalExpense(response.data.result.totalExpense);
+        updateTotalExpense(response.data.data.totalExpense);
         elements.lastUpdateDate.textContent = new Date().toLocaleDateString();
 
         if (currentUser.role === "premium") loadPremiumFeatures();
@@ -404,7 +404,7 @@ function handleEditExpense(expenseId) {
   authenticatedAxios
     .get(`expense/getExpenseByID/${expenseId}`)
     .then((response) => {
-      const expense = response.data.result[0];
+      const expense = response.data.data[0];
       elements.expenseCategory.value = expense.category;
       elements.expenseDescription.value = expense.description;
       elements.expenseAmount.value = expense.amount;

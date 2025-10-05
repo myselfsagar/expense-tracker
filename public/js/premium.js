@@ -49,7 +49,7 @@ async function handleDownloadExpenses(e) {
     e.preventDefault();
 
     const response = await authenticatedAxios.get("premium/downloadExpenses");
-    window.location.href = response.data.result.URL;
+    window.location.href = response.data.data.URL;
     loadPremiumFeatures();
   } catch (error) {
     console.error("Error downloading expenses:", error);
@@ -63,7 +63,7 @@ function loadPremiumFeatures() {
   authenticatedAxios
     .get("premium/showLeaderboard")
     .then((response) => {
-      displayLeaderboard(response.data.result);
+      displayLeaderboard(response.data.data);
     })
     .catch((error) => {
       console.error("Error loading leaderboard:", error);
@@ -73,7 +73,7 @@ function loadPremiumFeatures() {
   authenticatedAxios
     .get("premium/downloadHistory")
     .then((response) => {
-      displayDownloadHistory(response.data.result);
+      displayDownloadHistory(response.data.data);
     })
     .catch((error) => {
       console.error("Error loading download history:", error);

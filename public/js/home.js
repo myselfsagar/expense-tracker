@@ -210,14 +210,7 @@ async function onSignup(e) {
       password: password1.value,
     };
 
-    const response = await axios.post("user/signup", data);
-    if (response.data.statusCode === 409) {
-      emailAlertSignup.style.display = "block";
-      setTimeout(() => {
-        emailAlertSignup.style.display = "none";
-      }, 3000);
-      return;
-    }
+    await axios.post("user/signup", data);
 
     successAlertSignup.style.display = "block";
 
@@ -232,7 +225,14 @@ async function onSignup(e) {
     closeSignupModal();
     openloginModal();
   } catch (error) {
-    console.error("An error occurred:", error);
+    if (error.response && error.response.status === 409) {
+      emailAlertSignup.style.display = "block";
+      setTimeout(() => {
+        emailAlertSignup.style.display = "none";
+      }, 3000);
+    } else {
+      console.error("An error occurred:", error);
+    }
   }
 }
 
@@ -257,22 +257,7 @@ async function onLogin(e) {
     };
 
     const response = await axios.post("user/login", data);
-
-    if (response.data && response.data.statusCode === 404) {
-      emailAlertLogin.style.display = "block";
-      setTimeout(() => {
-        emailAlertLogin.style.display = "none";
-        e.target.reset();
-      }, 3000);
-    } else if (response.data && response.data.statusCode === 403) {
-      passwordAlertLogin.style.display = "block";
-      setTimeout(() => {
-        passwordAlertLogin.style.display = "none";
-        e.target.logPassword.value = "";
-      }, 3000);
-    }
-
-    localStorage.setItem("access_token", response.data.result.accessToken);
+    localStorage.setItem("access_token", response.data.data);
 
     successAlertLogin.style.display = "block";
     setTimeout(() => {
@@ -281,10 +266,29 @@ async function onLogin(e) {
       window.location.replace(`user`);
     }, 1000);
   } catch (error) {
-    console.error("An error occurred:", error);
+    if (error.response) {
+      const statusCode = error.response.status;
+
+      if (statusCode === 404) {
+        // User not found
+        emailAlertLogin.style.display = "block";
+        setTimeout(() => {
+          emailAlertLogin.style.display = "none";
+          e.target.reset();
+        }, 3000);
+      } else if (statusCode === 401) {
+        // Incorrect password
+        passwordAlertLogin.style.display = "block";
+        setTimeout(() => {
+          passwordAlertLogin.style.display = "none";
+          form2.querySelector("#logPassword").value = "";
+        }, 3000);
+      }
+    } else {
+      console.error("An error occurred:", error);
+    }
   }
 }
-
 // FOR BUYING PREMIUM
 const form3 = document.querySelector("#premium-form");
 const registerBtn = form3.querySelector("#register-submit");
