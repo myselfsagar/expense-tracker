@@ -1,20 +1,24 @@
-const success = (result, statusCode = 200) => {
-  return {
-    status: "ok",
+const sendSuccess = (res, data = {}, message = "Success", statusCode = 200) => {
+  res.status(statusCode).json({
     statusCode,
-    result,
-  };
-};
-
-const failure = (message, statusCode = 500) => {
-  return {
-    status: "error",
-    statusCode,
+    success: true,
     message,
-  };
+    data,
+  });
 };
 
-module.exports = {
-  success,
-  failure,
+const sendError = (
+  res,
+  message = "Something went wrong",
+  statusCode = 500,
+  errorDetails = {}
+) => {
+  res.status(statusCode).json({
+    statusCode,
+    success: false,
+    message,
+    error: errorDetails,
+  });
 };
+
+module.exports = { sendSuccess, sendError };

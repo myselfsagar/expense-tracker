@@ -1,105 +1,90 @@
-const UserServices = require("../services/userServices");
+const userServices = require("../services/dbCall/userServices");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { success, failure } = require("../utils/responseWrapper");
+const asyncHandler = require("../utils/asyncHandler");
+const ErrorHandler = require("../utils/errorHandler");
+const { sendSuccess } = require("../utils/responseWrapper");
 
-const signupController = async (req, res) => {
+const signupController = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
   //check if all the fields are entered
   if (!name || !email || !password) {
-    return res.send(failure("All fields are mandatory!", 400));
+    throw new ErrorHandler("All fields are mandatory!", 400);
   }
 
-  try {
-    //check if the user already signedup
-    const user = await UserServices.getUserByEmail(email);
-    if (user) {
-      return res.send(failure("User already exists", 409));
-    }
-
-    //hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    //create the new user
-    await UserServices.createUser(name, email, hashedPassword);
-
-    return res.send(success("Signup successful", 201));
-  } catch (error) {
-    return res.send(failure(error.message));
+  //check if the user already signedup
+  const user = await userServices.getUserByEmail(email);
+  if (user) {
+    throw new ErrorHandler(
+      "An account with this email address already exists.",
+      409
+    );
   }
-};
 
-const loginController = async (req, res) => {
+  //hash the password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  //create the new user
+  await userServices.createUser({ name, email, password: hashedPassword });
+
+  return sendSuccess(res, {}, "Signup successful", 201);
+});
+
+const loginController = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   //check if sending all fields
   if (!email || !password) {
-    return res.send(failure("All fields are required!", 400));
+    throw new ErrorHandler("All fields are required!", 400);
   }
 
-  try {
-    //check if the user exist if not through 404 failure
-    const user = await UserServices.getUserByEmail(email);
-    if (!user) {
-      return res.send(failure("User not found", 404));
-    }
-
-    const matched = await bcrypt.compare(password, user.password);
-
-    //check entered password with the actual password
-    if (!matched) {
-      return res.send(failure("Incorect password", 403));
-    }
-
-    const accessToken = jwt.sign(
-      { userId: user.id },
-      process.env.ACCESS_TOKEN_SECRET_KEY,
-      { expiresIn: "1h" }
-    );
-
-    return res.send(success({ accessToken }));
-  } catch (error) {
-    return res.send(failure(error.message));
+  //check if the user exist if not through 404 failure
+  const user = await userServices.getUserByEmail(email);
+  if (!user) {
+    throw new ErrorHandler("User not found", 404);
   }
-};
 
-const getCurrentUser = async (req, res) => {
+  const matched = await bcrypt.compare(password, user.password);
+
+  //check entered password with the actual password
+  if (!matched) {
+    throw new ErrorHandler("Incorrect password", 401);
+  }
+
+  const accessToken = jwt.sign(
+    { userId: user.id },
+    process.env.ACCESS_TOKEN_SECRET_KEY,
+    { expiresIn: "1d" }
+  );
+
+  return sendSuccess(res, accessToken, "Login successful");
+});
+
+const getCurrentUser = asyncHandler(async (req, res) => {
   const user = req.user;
   const userData = user.toJSON();
   delete userData.password; //remove password before sending
 
   return res.send(success(userData));
+});
+
+const userHomePageController = (req, res, next) => {
+  res.sendFile("userHome.html", { root: "views" });
 };
 
-const userHomePageController = (request, response, next) => {
-  response.sendFile("userHome.html", { root: "views" });
+const myProfileController = (req, res, next) => {
+  res.sendFile("myProfile.html", { root: "views" });
 };
 
-const myProfileController = (request, response, next) => {
-  response.sendFile("myProfile.html", { root: "views" });
-};
-
-const updateProfileController = async (req, res) => {
-  const { name, email } = req.body;
+const updateProfileController = asyncHandler(async (req, res) => {
   const user = req.user;
-  try {
-    if (email && email !== user.email) {
-      const emailExist = await UserServices.getUserByEmail(email);
-      if (emailExist) {
-        return res.send(failure("Email id already registered", 409));
-      }
-      user.email = email;
-    }
+  const { name, email } = req.body;
 
-    if (name) user.name = name;
-    await user.save();
+  await userServices.updateUserProfile(user, { name, email });
 
-    return res.send(success("Successfully updated"));
-  } catch (err) {
-    return res.send(failure(`Error while updating profile - ${err.message}`));
-  }
-};
+  return sendSuccess(res, {}, "Successfully updated");
+});
 
 module.exports = {
   signupController,
