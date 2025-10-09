@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Download = require("../models/Download");
+const Expense = require("../models/Expense");
 const AwsService = require("../services/awsServices");
 const asyncHandler = require("../utils/asyncHandler");
 const { sendSuccess } = require("../utils/responseWrapper");
